@@ -1,7 +1,8 @@
 import { createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
 import { allTools } from "./tool-registry";
 import { getVersion } from "./version";
-import { MISSIVE_INSTRUCTIONS } from "./server-instructions";
+import { buildInstructions } from "./server-instructions";
+import { loadRoster } from "./roster";
 import { MISSIVE_ICONS } from "./server-icon";
 
 /**
@@ -25,7 +26,7 @@ export const missiveServer = createSdkMcpServer({
 // factory provides no setter. A smoke test asserts it appears in `initialize`,
 // so a future SDK change here fails loudly in CI rather than silently.
 (missiveServer.instance.server as unknown as { _instructions?: string })._instructions =
-  MISSIVE_INSTRUCTIONS;
+  buildInstructions(loadRoster());
 
 // Advertise a human-friendly title and the server icon in `serverInfo`, which
 // clients read at `initialize` to display the server. `createSdkMcpServer` only

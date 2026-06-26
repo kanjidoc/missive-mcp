@@ -40,6 +40,9 @@ src/
   index.ts            stdio entry: StdioServerTransport + server.instance.connect
   server.ts           createSdkMcpServer({...}); sets MCP `instructions` on the server
   server-instructions.ts  the usage guidance the client shows the model at connect
+                          (+ buildInstructions(): base + optional roster block)
+  roster.ts           loads the OPTIONAL, gitignored missive-roster.json (name+id
+                      of users/teams) and renders it into the instructions
   load-env.ts         loads .env by absolute path (override:true, quiet:true)
   version.ts          single-source version (require package.json)
   missive-client.ts   fetch wrapper: auth, timeout, concurrency cap, 429 retry, result shaping
@@ -101,6 +104,11 @@ MCP content result, or to an error result on `ok:false` / a thrown error.
 - **MCP `instructions` is set via a backing field** in `server.ts`
   (`createSdkMcpServer` exposes no option for it). A handshake test asserts it
   appears at `initialize`, so an SDK rename fails loudly.
+- **The optional roster appends to `instructions`**, so the base is a *prefix*,
+  not the whole string. The handshake test uses `toContain(MISSIVE_INSTRUCTIONS)`
+  (not `toBe`) for exactly this reason. `missive-roster.json` is gitignored and
+  absent in CI, so `buildInstructions(loadRoster())` returns just the base there;
+  it only differs on a machine that has the file.
 - **zod-v4 → JSON Schema** drops numeric `min`/`max` and `.int()` from the
   published schema; the bounds are still enforced server-side and restated in each
   field's `describe()`. Don't be surprised the wire schema is laxer.
