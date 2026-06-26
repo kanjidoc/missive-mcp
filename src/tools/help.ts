@@ -11,7 +11,8 @@ import {
   TOPIC_TROUBLESHOOTING,
 } from "../docs/content";
 import { renderToolsTopic } from "../docs/render-tools";
-import { MISSIVE_INSTRUCTIONS } from "../server-instructions";
+import { buildInstructions } from "../server-instructions";
+import { loadRoster } from "../roster";
 import { getVersion } from "../version";
 
 /** Render the `index` topic — the list of all help topics, headed by the version. */
@@ -66,7 +67,7 @@ export const missiveHelp = tool(
         overview: renderOverviewTopic,
         architecture: TOPIC_ARCHITECTURE,
         tools: renderToolsTopic,
-        usage: MISSIVE_INSTRUCTIONS,
+        usage: () => buildInstructions(loadRoster()),
         authentication: TOPIC_AUTHENTICATION,
         safety: TOPIC_SAFETY,
         conventions: TOPIC_CONVENTIONS,

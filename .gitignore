@@ -3,6 +3,7 @@ dist/
 .env
 .env.bak
 .env.*.bak
+missive-roster.json
 *.log
 .DS_Store
 coverage/

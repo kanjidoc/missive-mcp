@@ -92,6 +92,26 @@ Find IDs in Missive → **Settings → API → Resource IDs**, or run `npm run s
 | `MISSIVE_DEFAULT_FROM_NAME` | no | Display name paired with the default from address. |
 | `MISSIVE_DEFAULT_ACCOUNT` | no | Default custom-channel account for `missive_create_message`. |
 
+### Private roster (optional)
+
+Drop a `missive-roster.json` next to `.env` to teach the assistant who your people
+and teams are, so "assign this to Anj" or "route it to TwoFabianos" resolves to the
+right Missive IDs **with no `missive_list_*` call**. The names and IDs are injected
+into the server instructions the client reads at connect time. Copy the shape from
+[`missive-roster.example.json`](missive-roster.example.json):
+
+```json
+{
+  "users": [{ "name": "Ada Lovelace", "id": "00000000-…-000000000001" }],
+  "teams": [{ "name": "Engineering", "id": "00000000-…-0000000000a1" }]
+}
+```
+
+Each entry is a bare `name` + `id` (from **Settings → API → Resource IDs**, or
+`npm run setup`). The file is **gitignored** — it holds real names and IDs, so it
+never gets committed. It's entirely optional: with no file, nothing changes. A
+missing, empty, or malformed file is ignored (logged to stderr), never fatal.
+
 ---
 
 ## What's *not* included (and why)

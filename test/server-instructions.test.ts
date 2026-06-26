@@ -26,7 +26,12 @@ describe("initialize handshake (real round-trip)", () => {
       client.connect(clientTransport),
     ]);
 
-    expect(client.getInstructions()).toBe(MISSIVE_INSTRUCTIONS);
+    // The base instructions are always surfaced; an optional, gitignored private
+    // roster (missive-roster.json) may be appended AFTER them — the base is always
+    // a PREFIX (the documented buildInstructions contract), so assert startsWith
+    // rather than exact-equal. This still guards the `_instructions` wiring: if it
+    // breaks, getInstructions() is undefined and the assertion fails.
+    expect(client.getInstructions()?.startsWith(MISSIVE_INSTRUCTIONS)).toBe(true);
 
     // serverInfo advertises the title and the embedded PNG icon.
     const info = client.getServerVersion();

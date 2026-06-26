@@ -1,3 +1,5 @@
+import { type Roster, renderRoster } from "./roster";
+
 /**
  * MCP server "instructions" — surfaced to the client (e.g. Claude Desktop) at
  * connect time and injected into the model's context. This is the single source
@@ -41,3 +43,14 @@ OUTPUT: tools return Missive's JSON verbatim, wrapped by resource key — for ex
 RATE LIMITS: 5 concurrent / 300 per minute. The client caps concurrency and auto-retries HTTP 429. For bulk reads, prefer batch comma-id calls (for example missive_get_message with several ids).
 
 Call missive_help (topic: tools, safety, authentication, usage, ...) for full documentation.`;
+
+/**
+ * Compose the instructions actually surfaced to the client: the static base
+ * above, plus an optional private roster block when a roster is present (see
+ * `roster.ts`). The base is always a PREFIX, so callers and tests can treat it as
+ * the stable core. Used by both `server.ts` (connect-time handshake) and
+ * `missive_help` (the `usage` topic), so the two never drift.
+ */
+export function buildInstructions(roster?: Roster): string {
+  return roster ? `${MISSIVE_INSTRUCTIONS}\n${renderRoster(roster)}` : MISSIVE_INSTRUCTIONS;
+}
