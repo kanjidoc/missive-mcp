@@ -1,0 +1,57 @@
+{
+  "name": "missive-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing Missive REST API tools (contacts, conversations, drafts, posts, tasks, labels and more) for AI assistants",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanjidoc/missive-mcp.git"
+  },
+  "homepage": "https://github.com/kanjidoc/missive-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/kanjidoc/missive-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    ".env.example"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "setup": "ts-node scripts/setup.ts",
+    "lint": "eslint src/",
+    "format": "prettier --write src/",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "missive",
+    "mcp",
+    "ai",
+    "tools",
+    "email"
+  ],
+  "author": "kanjidoc",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.97",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "dotenv": "^17.4.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.2",
+    "eslint": "^10.4.0",
+    "prettier": "^3.8.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.59.4",
+    "vitest": "^4.1.7"
+  }
+}

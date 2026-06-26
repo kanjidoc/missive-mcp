@@ -1,0 +1,90 @@
+name: Release
+
+# Safe by construction: the only non-fixed value is the version, read from the
+# in-repo package.json (never from a github.event.* payload) and validated
+# against strict semver before any use.
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      is_new: ${{ steps.v.outputs.is_new }}
+    steps:
+      # No setup-node: ubuntu-latest ships Node, and this job only runs `node -p`.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - id: v
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          if ! printf '%s' "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "package.json version '$VERSION' is not strict semver — aborting." >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "is_new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  release:
+    needs: check
+    if: needs.check.outputs.is_new == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm test
+      - name: Create the GitHub Release
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Re-check right before creating — the Release may have appeared since
+          # the `check` job (a concurrent run, a manual release, the backfill).
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "Release v$VERSION already exists — nothing to do."
+            exit 0
+          fi
+          # Notes first — extract-changelog.mjs exits non-zero on a missing or
+          # empty section, aborting (set -e) before anything is published.
+          node scripts/extract-changelog.mjs "$VERSION" > "${RUNNER_TEMP}/RELEASE_NOTES.md"
+          # One API call creates the lightweight tag (at this commit) and the
+          # Release. Authenticated with the default GITHUB_TOKEN, for which
+          # GitHub suppresses workflow runs — and no workflow here triggers on
+          # release/tag events — so this cannot recurse. Do not swap in a PAT.
+          if ! gh release create "v$VERSION" \
+                 --target "$GITHUB_SHA" --title "v$VERSION" \
+                 --notes-file "${RUNNER_TEMP}/RELEASE_NOTES.md"; then
+            # Failed only because the Release appeared concurrently? That's OK.
+            if gh release view "v$VERSION" >/dev/null 2>&1; then
+              echo "Release v$VERSION already exists (created concurrently) — OK."
+              exit 0
+            fi
+            echo "gh release create failed and no Release exists." >&2
+            exit 1
+          fi

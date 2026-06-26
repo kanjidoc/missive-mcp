@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "missive": {
+      "command": "node",
+      "args": [
+        "/Users/tonyfabiano/Documents/Cursor/missive-mcp/dist/index.js"
+      ]
+    }
+  }
+}

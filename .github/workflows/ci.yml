@@ -1,0 +1,24 @@
+name: CI
+
+# Safe by construction: this workflow runs only fixed npm scripts and uses no
+# event-derived input (no github.event.* interpolation), so there is no
+# command-injection surface.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm test
