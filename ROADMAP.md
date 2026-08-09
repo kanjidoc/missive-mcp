@@ -71,9 +71,13 @@ outage.
    `~/Library/Logs/Claude/mcp.log` or `~/Library/Logs/Claude/mcp-server-missive.log`.
    This is the trigger that actually matters. Check:
    `grep -o '"protocolVersion":"[^"]*"' ~/Library/Logs/Claude/mcp.log | sort -u`
-3. **The v1 maintenance window closes.** v1 (`@modelcontextprotocol/sdk`, latest `1.30.0`)
-   is maintenance-only with bug/security fixes guaranteed for ≥6 months after v2's
-   release — approximately **late January 2027**. Revisit before then regardless.
+3. **An end of v1 support is announced.** v1 (`@modelcontextprotocol/sdk`, latest `1.30.0`)
+   is maintenance-only, with bug and security fixes guaranteed for **at least** six months
+   after v2's release. Read that as a **floor, not an expiry**: it means support cannot end
+   before roughly late January 2027 — it does **not** mean it ends then, and **no v1
+   end-of-life date has been announced.** So this trigger is an announcement to watch for,
+   not a date to diary. Do not treat late January 2027 as a deadline; if nothing has been
+   announced by then, nothing has expired.
 4. **The server stops connecting** from Claude Desktop or Claude Code.
 
 ### 1.4 Verified exposure (9 August 2026)
