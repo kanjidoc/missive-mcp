@@ -136,6 +136,9 @@ npm run format  # prettier                 npm run setup   # validate token + li
 
 ## Reference
 
+- Staged forward work & open decisions: `ROADMAP.md` — read this before proposing an SDK
+  or protocol change. Top item: MCP spec `2026-07-28` exposure (assessed, migration
+  deferred — blocked upstream by the Agent SDK's v1 peer dependency).
 - Design spec & rationale: `docs/superpowers/specs/2026-06-26-missive-mcp-design.md`
 - Full tool reference: `docs/TOOLS.md`
 - Live, in-assistant help: the `missive_help` tool.
