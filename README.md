@@ -137,6 +137,12 @@ Everything else in the Missive REST API — reading and organizing conversations
 contacts, tasks, labels, teams, drafts, and internal posts — is available. Any of
 the above is a small, self-contained addition if you want it later.
 
+> **Missive also runs an official hosted MCP server** (`https://mcp.missiveapp.com`, OAuth,
+> no token). It adds conversation search and calendars, but its contacts, labels, teams,
+> and canned responses are read-only, and it has no tasks, posts, merge, or assign/close.
+> This project was compared against it in September 2026 and kept — the full comparison
+> and the conditions for revisiting are in [`ROADMAP.md`](ROADMAP.md) §3.
+
 ---
 
 ## Tools (36)

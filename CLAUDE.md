@@ -120,6 +120,37 @@ internal posts; conversation merge; saving drafts; custom-channel messages.
 What's deliberately out: external send, deletes, analytics reports, webhooks, and
 a few send-time options — see the "What's not included" section in the README.
 
+## Missive's official hosted MCP server — assessed, not adopted
+
+Missive runs its own remote MCP server at `https://mcp.missiveapp.com` (OAuth + PKCE, no
+API token, listed in Claude's connector directory). Assessed **10 September 2026**.
+Decision: **keep this server; do not connect the hosted one.** Full comparison, sources,
+and the triggers that would reopen this: `ROADMAP.md` §3.
+
+The short version, so nobody re-derives it:
+
+- **It has what we cannot build:** keyword search across conversations, calendar
+  read/write, draft *update*, and reach from claude.ai web/mobile. The REST API exposes
+  neither search nor calendars, so those two gaps are permanent here.
+- **It lacks most of what this server is for.** Its entire scope set is eight grants
+  (`conversations:read/write`, `contacts:read`, `organizations:read`, `drafts:write`,
+  `drafts:deliver`, `calendars:read/write` — verified from its live OAuth metadata). No
+  tasks, no creating posts, no contact / label / team / canned-response writes, no merge,
+  no assign / close / snooze, no custom-channel messages. "Manage conversations" is only
+  add/remove labels and mailboxes.
+- **Tighter limits:** 60 requests/min and 600/hour per user, shared across every app the
+  user has connected — vs the REST token's 300/min and 900 per 15 min this server uses.
+- **Prerequisites we never confirmed:** Productive or Business plan, plus an org-admin
+  toggle (Settings › Organizations › Overview › "Enable MCP access", off by default) in
+  every organization the user belongs to.
+- **Send is a checkbox there, an invariant here.** `drafts:deliver` is enforced
+  server-side when left unchecked at authorization, but that is decided once per grant.
+  Here it is a build-time guarantee (`src/tools/drafts.ts` + `test/tools.test.ts`).
+
+Do not propose replacing this server with the hosted one, and do not wire both up by
+default — overlapping read tools give the model two ways to answer the same question. If
+conversation search becomes a recurring pain, the adoption recipe is in `ROADMAP.md` §3.4.
+
 ## Rate limits
 
 Missive: 5 concurrent / 300 per minute / 900 per 15 minutes. The client caps
@@ -138,7 +169,8 @@ npm run format  # prettier                 npm run setup   # validate token + li
 
 - Staged forward work & open decisions: `ROADMAP.md` — read this before proposing an SDK
   or protocol change. Top item: MCP spec `2026-07-28` exposure (assessed, migration
-  deferred — blocked upstream by the Agent SDK's v1 peer dependency).
+  deferred — blocked upstream by the Agent SDK's v1 peer dependency). §3: Missive's
+  official hosted MCP server (assessed 10 September 2026, not adopted — summary above).
 - Design spec & rationale: `docs/superpowers/specs/2026-06-26-missive-mcp-design.md`
 - Full tool reference: `docs/TOOLS.md`
 - Live, in-assistant help: the `missive_help` tool.

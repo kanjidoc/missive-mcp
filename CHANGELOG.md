@@ -7,7 +7,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-_Nothing yet._
+### Docs
+
+- Recorded the assessment of Missive's official hosted MCP server
+  (`mcp.missiveapp.com`): scopes verified live, a side-by-side with this server, the
+  decision to keep this server, and the triggers that would reopen it (`ROADMAP.md` §3;
+  summaries in `CLAUDE.md` and the README).
 
 ## [0.1.0] - 2026-06-26
 
