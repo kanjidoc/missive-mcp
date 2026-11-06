@@ -69,10 +69,13 @@ token lives only in `.env`). Replace the path with your absolute checkout path.
 }
 ```
 
-**Claude Code:**
+**Claude Code** — register at user scope, so the server is available in every
+project (don't add a project `.mcp.json`: it would hardcode one machine's
+absolute path into the repo and show up as a broken server plus an approval
+prompt for everyone else; this repo gitignores it for that reason):
 
 ```bash
-claude mcp add-json missive '{"type":"stdio","command":"node","args":["/absolute/path/to/missive-mcp/dist/index.js"]}'
+claude mcp add-json missive '{"type":"stdio","command":"node","args":["/absolute/path/to/missive-mcp/dist/index.js"]}' --scope user
 ```
 
 Restart the client, and the `missive` tools appear.

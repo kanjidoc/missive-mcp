@@ -7,3 +7,6 @@ missive-roster.json
 *.log
 .DS_Store
 coverage/
+# Project-scoped MCP registration (machine-specific absolute path) — register
+# at user scope instead; see README "Configure your client". Local copies stay.
+.mcp.json
